@@ -3,8 +3,8 @@
 ;; Copyright © 2021 Taiki Harada
 ;;
 ;; Author: Taiki Harada <th994209@gmail.com>
-;; URL: 
-;; Version: 0.0.x-snapshot
+;; URL: https://github.com/th994/nikki
+;; Version: 0.0.1-snapshot
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "24.3"))
 
