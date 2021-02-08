@@ -114,7 +114,9 @@ If the date string are single digits, add a leading zero."
   "Add to the keymap in calendar mode."
   (define-key calendar-mode-map (kbd "C-c C-n") 'nikki-open-by-calendar))
 
-(add-hook 'calendar-load-hook 'nikki-assign-calendar-mode-keymap)
+(eval-after-load 'calendar
+  (lambda ()
+    (nikki-assign-calendar-mode-keymap)))
 
 ;;;###autoload
 (defun nikki-find-diary ()
