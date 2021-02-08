@@ -4,7 +4,7 @@
 ;;
 ;; Author: Taiki Harada <th994209@gmail.com>
 ;; URL: https://github.com/th994/nikki
-;; Version: 0.0.1-snapshot
+;; Version: 0.0.2
 ;; Keywords: convenience
 ;; Package-Requires: ((emacs "24.3"))
 
