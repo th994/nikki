@@ -95,11 +95,11 @@ If the date string are single digits, add a leading zero."
    path-list))
   
 ;;;###autoload
-(defun nikki-open-by-calendar (&optional _date event)
+(defun nikki-open-by-calendar (&optional date event)
   "Get and execute a specific date in calendar mode."
   (interactive (list nil last-nonmenu-event))
-  (let* ((date (calendar-cursor-to-date t event))
-	 (fixed-date-list (mapcar 'nikki-add-zero-to-date-string date))
+  (or date (setq date (calendar-cursor-to-date t event)))
+  (let* ((fixed-date-list (mapcar 'nikki-add-zero-to-date-string date))
 	 (year (car (last fixed-date-list)))
 	 (month (car fixed-date-list))
 	 (day (cadr fixed-date-list))
@@ -121,10 +121,10 @@ If the date string are single digits, add a leading zero."
 
 ;;;###autoload
 (defun nikki-find-diary ()
-  "Find the directory where the diary is stored and open it with dired. 
+  "Find the directory where the diary is stored and open it with dired.
 If it doesn't exist, create it."
   (interactive)
-  (let ((nikki-directory nikki-default-directory)) 
+  (let ((nikki-directory nikki-default-directory))
     (if (file-directory-p nikki-directory)
 	(find-file nikki-directory)
       (make-directory nikki-directory)
