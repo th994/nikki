@@ -34,7 +34,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'calendar)
 
 (defgroup nikki nil
   "nikki configuration."
@@ -95,7 +94,7 @@ If the date string are single digits, add a leading zero."
    path-list))
   
 ;;;###autoload
-(defun nikki-open-by-calendar (&optional _date event)
+(defun nikki-open-by-calendar (&optional date event)
   "Get and execute a specific date in calendar mode."
   (interactive (list nil last-nonmenu-event))
   (let* ((date (calendar-cursor-to-date t event))
