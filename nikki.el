@@ -152,7 +152,6 @@ If it doesn't exist, create it."
 
 Local bindings (`nikki-mode-map'):
 \\{nikki-mode-map}"
-  :global t
   :keymap nikki-mode-map
   :lighter " nikki"
   (if nikki-mode
