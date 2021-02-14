@@ -57,10 +57,10 @@
   :group 'nikki
   :type 'symbol)
 
-(defun nikki-current-time-alist ()
-  "Get the current time, and make the alist."
+(defun nikki-time-alist (time)
+  "Get the TIME, and make the alist."
   (let ((current-time-list
-	 (split-string (format-time-string "%Y %m %d" (current-time))))
+	 (split-string (format-time-string "%Y %m %d" time)))
 	(keys '(year month day)))
     (cl-pairlis keys current-time-list)))
 
@@ -96,10 +96,11 @@ If the date string are single digits, add a leading zero."
   
 ;;;###autoload
 (defun nikki-open-by-calendar (&optional date event)
-  "Get and execute a specific date in calendar mode."
+  "Get and execute a specific DATE in calendar mode.
+EVENT specifies a buffer position to use for a date."
   (interactive (list nil last-nonmenu-event))
   (or date (setq date (calendar-cursor-to-date t event)))
-  (let* ((fixed-date-list (mapcar 'nikki-add-zero-to-date-string date))
+  (let* ((fixed-date-list (mapcar #'nikki-add-zero-to-date-string date))
 	 (year (car (last fixed-date-list)))
 	 (month (car fixed-date-list))
 	 (day (cadr fixed-date-list))
@@ -110,14 +111,6 @@ If the date string are single digits, add a leading zero."
     (if (file-exists-p file-path)
 	(find-file file-path)
       (error "Not found diary (nikki)"))))
-
-(defun nikki-assign-calendar-mode-keymap ()
-  "Add to the keymap in calendar mode."
-  (define-key calendar-mode-map (kbd "C-c C-n") 'nikki-open-by-calendar))
-
-(eval-after-load 'calendar
-  (lambda ()
-    (nikki-assign-calendar-mode-keymap)))
 
 ;;;###autoload
 (defun nikki-find-diary ()
@@ -134,7 +127,7 @@ If it doesn't exist, create it."
 (defun nikki-make-diary ()
   "Create a diary for the day.  If it already exists, open it."
   (interactive)
-  (let* ((current-time-list (nikki-current-time-alist))
+  (let* ((current-time-list (nikki-time-alist (current-time)))
 	 (year (nikki-cl-assoc-val current-time-list 'year))
 	 (month (nikki-cl-assoc-val current-time-list 'month))
 	 (day (nikki-cl-assoc-val current-time-list 'day))
@@ -147,6 +140,24 @@ If it doesn't exist, create it."
       (nikki-make-directories
        (list nikki-default-directory nikki-directory))
       (nikki-write-and-open-file file-path))))
-	
+
+(defvar nikki-mode-map
+  (let ((map (make-sparse-keymap)))
+    map)
+  "Map for variable `nikki-mode'.")
+
+;;;###autoload
+(define-minor-mode nikki-mode
+  "Toggle nikki mode on or off.
+
+Local bindings (`nikki-mode-map'):
+\\{nikki-mode-map}"
+  :global t
+  :keymap nikki-mode-map
+  :lighter " nikki"
+  (if nikki-mode
+      (define-key calendar-mode-map (kbd "C-c C-n")
+	'nikki-open-by-calendar)))
+
 (provide 'nikki)
-;;; nikki.el ends here.
+;;; nikki.el ends here
