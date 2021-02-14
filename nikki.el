@@ -143,6 +143,7 @@ If it doesn't exist, create it."
 
 (defvar nikki-mode-map
   (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-n") 'nikki-open-by-calendar)
     map)
   "Map for variable `nikki-mode'.")
 
@@ -153,10 +154,7 @@ If it doesn't exist, create it."
 Local bindings (`nikki-mode-map'):
 \\{nikki-mode-map}"
   :keymap nikki-mode-map
-  :lighter " nikki"
-  (if nikki-mode
-      (define-key calendar-mode-map (kbd "C-c C-n")
-	'nikki-open-by-calendar)))
+  :lighter " nikki")
 
 (provide 'nikki)
 ;;; nikki.el ends here
