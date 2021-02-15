@@ -110,7 +110,7 @@ EVENT specifies a buffer position to use for a date."
 			    file-name)))
     (if (file-exists-p file-path)
 	(find-file file-path)
-      (error "Not found diary (nikki)"))))
+      (user-error "Diary not found at %s (nikki)" file-path))))
 
 ;;;###autoload
 (defun nikki-find-diary ()
