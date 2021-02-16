@@ -34,10 +34,6 @@ Create a diary for the day.  If it already exists, open it.
 Find the directory where the diary is stored and open it with dired.
 If it doesn't exist, create it.
 
-### Function: `nikki-open-by-calendar`
-
-Get and open a specific date's diary.
-
 ## Minor mode
 
 ### nikki-mode
