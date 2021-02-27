@@ -61,6 +61,6 @@ Distributed under the GNU General Public License; type <kbd>C-h C-c</kbd> to vie
 [melpa-package]: http://melpa.org/#/nikki
 [melpa-stable-package]: http://stable.melpa.org/#/nikki
 [COPYING]: http://www.gnu.org/copyleft/gpl.html
-[contributors]: https://github.com/bbatsov/nikki/contributors
+[contributors]: https://github.com/th994/nikki/contributors
 [melpa]: http://melpa.org
 [melpa stable]: http://stable.melpa.org
