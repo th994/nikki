@@ -109,7 +109,6 @@ Path format is the following.
 	 (file-name (concat year month day nikki-file-extension)))
     (concat nikki-dir file-name)))
 
-;; new
 (defun nikki-make-diary (time)
   "Create a diary from time to TIME.
 If the directory for the target year does not exist under the `nikki-default-directory', create it."
