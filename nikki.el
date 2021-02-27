@@ -32,8 +32,6 @@
 ;; Boston, MA 02110-1301, USA.
 
 ;;; Code:
-
-(require 'cl-lib)
 (require 'calendar)
 
 (defgroup nikki nil
@@ -57,21 +55,26 @@
   :group 'nikki
   :type 'symbol)
 
-(defun nikki-time-alist (time)
-  "Get the TIME, and make the alist."
-  (let ((current-time-list
-	 (split-string (format-time-string "%Y %m %d" time)))
-	(keys '(year month day)))
-    (cl-pairlis keys current-time-list)))
+(defun nikki-date-list (time)
+  "Create a list of dates from TIME."
+  (split-string (format-time-string "%m %d %Y" time)))
 
-(defun nikki-cl-assoc-val (alist key)
-  "Get the value of a pair from ALIST by KEY."
-  (cdr (cl-assoc key alist)))
+(defun nikki-year (date-list)
+  "Extract the year from a DATE-LIST(%m %d %Y)."
+  (car (last date-list)))
+
+(defun nikki-month (date-list)
+  "Extract the month from a DATE-LIST(%m %d %Y)."
+  (car date-list))
+
+(defun nikki-day (date-list)
+  "Extract the day from a DATE-LIST(%m %d %Y)."
+  (cadr date-list))
 
 (defun nikki-write-initial-content (path)
   "Insert the date in the first line of the diary(PATH)."
-  (write-region
-   (format-time-string "%Y-%m-%d" (current-time)) nil path))
+  (let ((content (format-time-string "%Y-%m-%d" (current-time))))
+    (write-region content nil path)))
 
 (defun nikki-write-and-open-file (path)
   "If the diary(PATH) of the day does not exist, create it and open."
@@ -93,7 +96,32 @@ If the date string are single digits, add a leading zero."
       (unless (file-directory-p path)
 	(make-directory path)))
    path-list))
-  
+
+(defun nikki-make-diary-path (date-list)
+  "Create a path to save the diary from DATE-LIST(%m %d %Y).
+Path format is the following.
+`nikki-default-directory'/%Y/%Y-%m-%d.`nikki-file-extension'"
+  (let* ((year (nikki-year date-list))
+	 (month (nikki-month date-list))
+	 (day (nikki-day date-list))
+	 (nikki-dir (concat (file-name-as-directory nikki-default-directory)
+		      (file-name-as-directory year)))
+	 (file-name (concat year month day nikki-file-extension)))
+    (concat nikki-dir file-name)))
+
+;; new
+(defun nikki-make-diary (time)
+  "Create a diary from time to TIME.
+If the directory for the target year does not exist under the `nikki-default-directory', create it."
+  (let* ((date-list (nikki-date-list time))
+	 (nikki-path (nikki-make-diary-path date-list))
+	 (nikki-dir (file-name-directory nikki-path)))
+    (if (file-directory-p nikki-dir)
+	(nikki-write-and-open-file nikki-path)
+      (nikki-make-directories
+       (list nikki-default-directory nikki-dir))
+      (nikki-write-and-open-file nikki-path))))
+      
 ;;;###autoload
 (defun nikki-open-by-calendar (&optional date event)
   "Get and execute a specific DATE in calendar mode.
@@ -101,13 +129,7 @@ EVENT specifies a buffer position to use for a date."
   (interactive (list nil last-nonmenu-event))
   (or date (setq date (calendar-cursor-to-date t event)))
   (let* ((fixed-date-list (mapcar #'nikki-add-zero-to-date-string date))
-	 (year (car (last fixed-date-list)))
-	 (month (car fixed-date-list))
-	 (day (cadr fixed-date-list))
-	 (file-name (concat year month day nikki-file-extension))
-	 (file-path (concat (file-name-as-directory nikki-default-directory)
-			    (file-name-as-directory year)
-			    file-name)))
+	 (file-path (nikki-make-diary-path fixed-date-list)))
     (if (file-exists-p file-path)
 	(find-file file-path)
       (user-error "Diary not found at %s (nikki)" file-path))))
@@ -124,22 +146,10 @@ If it doesn't exist, create it."
       (find-file nikki-directory))))
 
 ;;;###autoload
-(defun nikki-make-diary ()
-  "Create a diary for the day.  If it already exists, open it."
+(defun nikki-make-diary-today ()
+  "Create a diary for today.  If it already exists, open it."
   (interactive)
-  (let* ((current-time-list (nikki-time-alist (current-time)))
-	 (year (nikki-cl-assoc-val current-time-list 'year))
-	 (month (nikki-cl-assoc-val current-time-list 'month))
-	 (day (nikki-cl-assoc-val current-time-list 'day))
-	 (nikki-directory (concat (file-name-as-directory nikki-default-directory)
-				  (file-name-as-directory year)))
-	 (file-name (concat year month day nikki-file-extension))
-	 (file-path (concat nikki-directory file-name)))
-    (if (file-directory-p nikki-directory)
-	(nikki-write-and-open-file file-path)
-      (nikki-make-directories
-       (list nikki-default-directory nikki-directory))
-      (nikki-write-and-open-file file-path))))
+  (nikki-make-diary (current-time)))
 
 (defvar nikki-mode-map
   (let ((map (make-sparse-keymap)))
