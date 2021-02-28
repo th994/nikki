@@ -25,9 +25,9 @@ If the installation doesn't work try refreshing the package list:
 
 ## Functions
 
-### Function: `nikki-make-diary`
+### Function: `nikki-make-diary-today`
 
-Create a diary for the day.  If it already exists, open it.
+Create a diary for today.  If it already exists, open it.
 
 ### Function: `nikki-find-diary`
 
